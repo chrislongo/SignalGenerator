@@ -9,10 +9,10 @@ struct FrequencyInputView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Input field
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 4) {
                 HStack(alignment: .lastTextBaseline, spacing: 2) {
                     Text(inputText.isEmpty ? "0" : inputText)
-                        .font(Theme.monoBold(38))
+                        .font(Theme.monoBold(28))
                         .foregroundStyle(inputText.isEmpty ? Theme.amber.opacity(0.3) : Theme.amber)
                         .shadow(color: Theme.amber.opacity(0.4), radius: 10)
                         .lineLimit(1)
@@ -21,53 +21,53 @@ struct FrequencyInputView: View {
                     // Blinking cursor
                     Rectangle()
                         .fill(Theme.amber)
-                        .frame(width: 3, height: 34)
+                        .frame(width: 2, height: 24)
                         .shadow(color: Theme.amber.opacity(0.6), radius: 6)
                         .modifier(BlinkModifier())
                 }
 
                 Text("10 — 20000 Hz")
-                    .font(Theme.mono(10))
+                    .font(Theme.mono(9))
                     .foregroundStyle(Theme.crtTeal.opacity(0.5))
             }
             .padding(.horizontal, 14)
-            .padding(.top, 14)
-            .padding(.bottom, 10)
+            .padding(.top, 10)
+            .padding(.bottom, 6)
 
             Rectangle()
                 .fill(Color(hex: "#1a1e14"))
                 .frame(height: 1)
 
             // Keypad
-            VStack(spacing: 5) {
-                HStack(spacing: 5) {
+            VStack(spacing: 4) {
+                HStack(spacing: 4) {
                     keyButton("1") { append("1") }
                     keyButton("2") { append("2") }
                     keyButton("3") { append("3") }
                     keyButton("\u{232B}", style: .dim) { backspace() }
                 }
-                HStack(spacing: 5) {
+                HStack(spacing: 4) {
                     keyButton("4") { append("4") }
                     keyButton("5") { append("5") }
                     keyButton("6") { append("6") }
                     keyButton("Hz", style: .confirm) { confirm(multiplier: 1) }
                 }
-                HStack(spacing: 5) {
+                HStack(spacing: 4) {
                     keyButton("7") { append("7") }
                     keyButton("8") { append("8") }
                     keyButton("9") { append("9") }
                     keyButton("kHz", style: .confirmDim) { confirm(multiplier: 1000) }
                 }
-                HStack(spacing: 5) {
+                HStack(spacing: 4) {
                     keyButton("ESC", style: .dim) { cancel() }
                     keyButton("0") { append("0") }
                     keyButton(".", style: .normal) { appendDecimal() }
-                    Color.clear.frame(maxWidth: .infinity, maxHeight: .infinity)
+                    keyButton("C", style: .confirmDim) { inputText = "" }
                 }
             }
             .padding(.horizontal, 10)
-            .padding(.top, 8)
-            .padding(.bottom, 10)
+            .padding(.top, 6)
+            .padding(.bottom, 8)
         }
     }
 
@@ -81,11 +81,11 @@ struct FrequencyInputView: View {
     private func keyButton(_ label: String, style: KeyStyle = .normal, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(label)
-                .font(style == .confirm || style == .confirmDim ? Theme.monoBold(13) : Theme.monoBold(16))
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .font(style == .confirm || style == .confirmDim ? Theme.monoBold(12) : Theme.monoBold(14))
+                .frame(maxWidth: .infinity)
+                .frame(height: 28)
         }
         .buttonStyle(KeypadButtonStyle(style: style))
-        .aspectRatio(1.4, contentMode: .fit)
     }
 
     // MARK: - Actions

@@ -17,7 +17,7 @@ Single-screen signal generator app: generates audio tones (sine, square, saw, tr
 
 ### Audio Engine (Audio/AudioEngine.swift)
 
-`AVAudioEngine` with `AVAudioSourceNode` render callback for direct sample-level synthesis. All waveform types are generated in a single render callback switch statement. Uses 4x oversampling (192 kHz internally) with a 15-tap half-band FIR decimation filter to eliminate aliasing on square/saw waves at high frequencies. A 256-sample crossfade prevents pops when switching waveform types.
+`AVAudioEngine` with `AVAudioSourceNode` render callback for direct sample-level synthesis at 48 kHz. All waveform types are generated in a single render callback switch statement. Uses PolyBLEP anti-aliasing for square and sawtooth waves, and an integrated PolyBLEP'd square wave for band-limited triangle. A 256-sample crossfade prevents pops when switching waveform types.
 
 **Critical constraint**: The render callback runs on a real-time audio thread. No allocations, no locks, no ObjC. Parameters are bridged from the main thread via `AudioParameters`, a class using naturally-aligned 32-bit loads/stores for thread safety.
 

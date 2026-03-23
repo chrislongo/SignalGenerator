@@ -19,8 +19,9 @@ A standalone iOS app that generates audio test tones and noise signals with a ta
 - Noise selection replaces the current tone (not layered)
 
 ### Anti-Aliasing
-- 4x oversampling (192 kHz) with half-band FIR decimation filter
-- Eliminates aliasing artifacts on square/saw waves at high frequencies
+- PolyBLEP anti-aliasing on square and sawtooth waves
+- Band-limited triangle via integrated PolyBLEP'd square wave
+- Eliminates aliasing artifacts at high frequencies
 
 ### Waveform Switching
 - Crossfade between waveforms to prevent pops/clicks

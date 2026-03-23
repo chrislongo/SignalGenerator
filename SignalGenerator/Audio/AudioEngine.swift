@@ -63,6 +63,7 @@ final class AudioEngine {
 
         let params = self.params
         var phase: Double = 0
+        var triIntegrator: Double = 0  // leaky integrator for band-limited triangle
 
         // Pink noise state (Voss-McCartney algorithm)
         var pinkB0: Double = 0, pinkB1: Double = 0, pinkB2: Double = 0
@@ -139,14 +140,13 @@ final class AudioEngine {
                     sample = 2.0 * phase - 1.0
                     sample -= polyBlep(phase, phaseIncrement)
 
-                case 3: // Triangle (integrated square, naturally band-limited)
-                    // Start with band-limited square
+                case 3: // Triangle (integrated band-limited square)
                     var sq = phase < 0.5 ? 1.0 : -1.0
                     sq += polyBlep(phase, phaseIncrement)
                     sq -= polyBlep(fmod(phase + 0.5, 1.0), phaseIncrement)
-                    // Leaky integrator to convert square → triangle
-                    // We use a static var pattern via the phase trick
-                    sample = 4.0 * abs(phase - 0.5) - 1.0
+                    // Integrate the square wave to produce triangle
+                    triIntegrator += phaseIncrement * sq * 4.0
+                    sample = triIntegrator
 
                 case 4: // White noise
                     sample = Double(lcgNext())

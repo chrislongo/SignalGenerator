@@ -18,7 +18,8 @@ SignalGenerator/
 │   ├── Display/
 │   │   ├── DisplayView.swift             # CRT display container (bezel, scanlines, grid)
 │   │   ├── WaveformCanvasView.swift      # Real-time waveform rendering via Canvas
-│   │   └── ReadoutView.swift             # Frequency, note, volume, waveform label
+│   │   ├── ReadoutView.swift             # Frequency, note, volume, waveform label
+│   │   └── FrequencyInputView.swift      # Calculator-style direct frequency entry
 │   ├── Controls/
 │   │   ├── JogwheelView.swift            # Rotary jogwheel
 │   │   ├── WaveformButtonsView.swift     # 3×2 waveform/noise selector grid
@@ -49,8 +50,13 @@ All audio synthesis is consolidated in `AudioEngine.swift` — a single `AVAudio
 ### Signal Chain
 
 ```
-AVAudioSourceNode (render callback) → AVAudioMixerNode → AVAudioOutputNode (speakers)
+AVAudioSourceNode (render callback @ 192 kHz) → FIR decimation → 48 kHz output
+    → AVAudioMixerNode → AVAudioOutputNode (speakers)
 ```
+
+### 4x Oversampling
+
+The render callback generates samples at 4x the output rate (192 kHz). A 15-tap half-band FIR filter then decimates back to 48 kHz, filtering out harmonics above Nyquist. This eliminates aliasing artifacts that are audible on square and sawtooth waves at high frequencies (e.g. a 20 kHz square wave's odd harmonics would fold back into the audible range without oversampling).
 
 ### Render Callback
 
@@ -119,6 +125,10 @@ The jogwheel uses a `DragGesture` mapped to angular rotation:
 2. On drag change: compute angular delta, apply frequency change scaled by step increment
 3. On drag end: stop (no inertia)
 
+### Frequency Snapping
+
+When the step increment is >= 1 Hz, frequency snaps to the nearest multiple of the step size. This applies both during jogwheel rotation and when changing the step increment. For example, with step 10: 440 → 450 → 460.
+
 ### Visual Rotation
 
 The wheel face rotates via `.rotationEffect()`. The thumb indent rotates with it since it's part of the same view.
@@ -130,6 +140,10 @@ The wheel face rotates via `.rotationEffect()`. The thumb indent rotates with it
 ### Waveform Visualization (Canvas)
 
 SwiftUI `Canvas` view with `TimelineView(.animation)` drives 60fps updates. The waveform draws a `Path` based on the same math as the audio engine but for display purposes only. Number of visible cycles scales: `clamp(frequency / 80, 1.5, 12)`.
+
+### Direct Frequency Input
+
+Tapping the frequency readout in the display opens `FrequencyInputView` — a calculator-style numeric keypad that replaces the waveform and readout. Users type a value and confirm with **Hz** (direct) or **kHz** (×1000). ESC cancels. Values outside the 10–20000 Hz range are rejected.
 
 ### CRT Effects
 

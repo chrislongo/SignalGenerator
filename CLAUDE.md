@@ -17,7 +17,7 @@ Single-screen signal generator app: generates audio tones (sine, square, saw, tr
 
 ### Audio Engine (Audio/AudioEngine.swift)
 
-`AVAudioEngine` with `AVAudioSourceNode` render callback for direct sample-level synthesis. All waveform types are generated in a single render callback switch statement (no separate ToneGenerator/NoiseGenerator files despite what docs/Design.md says).
+`AVAudioEngine` with `AVAudioSourceNode` render callback for direct sample-level synthesis. All waveform types are generated in a single render callback switch statement. Uses 4x oversampling (192 kHz internally) with a 15-tap half-band FIR decimation filter to eliminate aliasing on square/saw waves at high frequencies. A 256-sample crossfade prevents pops when switching waveform types.
 
 **Critical constraint**: The render callback runs on a real-time audio thread. No allocations, no locks, no ObjC. Parameters are bridged from the main thread via `AudioParameters`, a class using naturally-aligned 32-bit loads/stores for thread safety.
 
@@ -25,7 +25,7 @@ The signal chain is: `AVAudioSourceNode → AVAudioMixerNode → AVAudioOutputNo
 
 ### State Management
 
-`SignalState` (Models/SignalState.swift) is the single `@Observable` source of truth. `ContentView` owns it and passes it down. State changes propagate to the audio engine via `.onChange` modifiers that call `audioEngine.update(state:)`.
+`SignalState` (Models/SignalState.swift) is the single `@Observable` source of truth. `ContentView` owns it and passes it down. State changes propagate to the audio engine via `.onChange` modifiers that call `audioEngine.update(state:)`. Do not use `didSet` on `@Observable` properties — it causes re-entrant observation issues. Clamping is done at call sites.
 
 ### Key Types
 
@@ -35,7 +35,9 @@ The signal chain is: `AVAudioSourceNode → AVAudioMixerNode → AVAudioOutputNo
 
 ### UI Structure
 
-`ContentView` assembles the full layout top-to-bottom: HeaderBar → DisplayView (CRT-style with Canvas waveform + readout) → WaveformButtons (3x2 grid) → Jogwheel + Step/Volume controls → PowerView. All colors and fonts come from `Theme` enum.
+`ContentView` assembles the full layout top-to-bottom: HeaderBar → DisplayView (CRT-style with Canvas waveform + readout) → WaveformButtons (3x2 grid) → Jogwheel + Step/Volume controls → PowerView. All colors and fonts come from `Theme` enum. Tapping the frequency readout opens `FrequencyInputView` — a calculator-style keypad for direct frequency entry with Hz/kHz confirm buttons.
+
+Frequency snaps to the active step increment (for steps >= 1 Hz) both when turning the jogwheel and when changing step size.
 
 ### Custom Fonts
 

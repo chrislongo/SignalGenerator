@@ -18,6 +18,10 @@ A standalone iOS app that generates audio test tones and noise signals with a ta
 - Pink noise (−3 dB/octave rolloff)
 - Noise selection replaces the current tone (not layered)
 
+### Anti-Aliasing
+- 4x oversampling (192 kHz) with half-band FIR decimation filter
+- Eliminates aliasing artifacts on square/saw waves at high frequencies
+
 ### Waveform Switching
 - Crossfade between waveforms to prevent pops/clicks
 
@@ -40,6 +44,14 @@ A standalone iOS app that generates audio test tones and noise signals with a ta
 - Buttons to set the jogwheel's step resolution: **0.1 Hz, 1 Hz, 10 Hz, 100 Hz**
 - Active increment uses the unified active button style (off-white)
 - Allows coarse sweeping and fine-tuning without mode switching
+- Frequency snaps to the nearest step value when changing increments (e.g. 443 Hz snaps to 440 at step 10)
+
+### Direct Frequency Input
+- Tap the frequency readout to open a calculator-style numeric keypad
+- Number keys 0–9, decimal point, backspace
+- **Hz** button confirms the value directly, **kHz** confirms as value × 1000
+- ESC cancels and returns to normal display
+- Values outside 10–20000 Hz are rejected
 
 ### Waveform / Noise Selector
 - Dedicated buttons for each type: Sine, Square, Saw, Triangle, White Noise, Pink Noise

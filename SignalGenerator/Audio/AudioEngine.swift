@@ -78,6 +78,33 @@ final class AudioEngine {
             return f * 2.0 - 1.0
         }
 
+        // Crossfade state for seamless waveform switching
+        var prevWaveform: Int32 = 0
+        var crossfadeRemaining: Int = 0
+        let crossfadeSamples: Int = 256
+
+        func generateSample(waveform: Int32, phase: Double) -> Float {
+            switch waveform {
+            case 0: return Float(sin(2.0 * .pi * phase))
+            case 1: return phase < 0.5 ? 1.0 : -1.0
+            case 2: return Float(2.0 * phase - 1.0)
+            case 3: return Float(4.0 * abs(phase - 0.5) - 1.0)
+            case 4: return lcgNext()
+            case 5:
+                let white = Double(lcgNext())
+                pinkB0 = 0.99886 * pinkB0 + white * 0.0555179
+                pinkB1 = 0.99332 * pinkB1 + white * 0.0750759
+                pinkB2 = 0.96900 * pinkB2 + white * 0.1538520
+                pinkB3 = 0.86650 * pinkB3 + white * 0.3104856
+                pinkB4 = 0.55000 * pinkB4 + white * 0.5329522
+                pinkB5 = -0.7616 * pinkB5 - white * 0.0168980
+                let pink = (pinkB0 + pinkB1 + pinkB2 + pinkB3 + pinkB4 + pinkB5 + pinkB6 + white * 0.5362) * 0.11
+                pinkB6 = white * 0.115926
+                return Float(pink)
+            default: return 0
+            }
+        }
+
         sourceNode = AVAudioSourceNode(format: format) { isSilence, _, frameCount, audioBufferList -> OSStatus in
             let freq      = params.frequency
             let vol       = params.volume
@@ -94,41 +121,24 @@ final class AudioEngine {
                 return noErr
             }
 
+            // Detect waveform change and start crossfade
+            if waveform != prevWaveform {
+                crossfadeRemaining = crossfadeSamples
+                prevWaveform = waveform
+            }
+
             let phaseIncrement = Double(freq) / Self.sampleRate
 
             for i in 0..<Int(frameCount) {
+                let newSample = generateSample(waveform: waveform, phase: phase)
+
                 let sample: Float
-
-                switch waveform {
-                case 0: // Sine
-                    sample = Float(sin(2.0 * .pi * phase))
-
-                case 1: // Square
-                    sample = phase < 0.5 ? 1.0 : -1.0
-
-                case 2: // Sawtooth
-                    sample = Float(2.0 * phase - 1.0)
-
-                case 3: // Triangle
-                    sample = Float(4.0 * abs(phase - 0.5) - 1.0)
-
-                case 4: // White noise
-                    sample = lcgNext()
-
-                case 5: // Pink noise (Voss-McCartney)
-                    let white = Double(lcgNext())
-                    pinkB0 = 0.99886 * pinkB0 + white * 0.0555179
-                    pinkB1 = 0.99332 * pinkB1 + white * 0.0750759
-                    pinkB2 = 0.96900 * pinkB2 + white * 0.1538520
-                    pinkB3 = 0.86650 * pinkB3 + white * 0.3104856
-                    pinkB4 = 0.55000 * pinkB4 + white * 0.5329522
-                    pinkB5 = -0.7616 * pinkB5 - white * 0.0168980
-                    let pink = (pinkB0 + pinkB1 + pinkB2 + pinkB3 + pinkB4 + pinkB5 + pinkB6 + white * 0.5362) * 0.11
-                    pinkB6 = white * 0.115926
-                    sample = Float(pink)
-
-                default:
-                    sample = 0
+                if crossfadeRemaining > 0 {
+                    let t = Float(crossfadeRemaining) / Float(crossfadeSamples)
+                    sample = newSample * (1.0 - t)  // fade in new
+                    crossfadeRemaining -= 1
+                } else {
+                    sample = newSample
                 }
 
                 buffer[i] = sample * vol

@@ -45,31 +45,6 @@ struct PowerView: View {
             }
 
             Spacer()
-
-            // Output jack
-            HStack(spacing: 8) {
-                Text("OUT")
-                    .font(Theme.display(8))
-                    .kerning(2)
-                    .foregroundStyle(Theme.textFaint)
-
-                // Jack hole
-                Circle()
-                    .fill(
-                        RadialGradient(
-                            gradient: Gradient(colors: [Theme.bodyDarkest, Theme.bodyLighter]),
-                            center: .center,
-                            startRadius: 0,
-                            endRadius: 9
-                        )
-                    )
-                    .frame(width: 18, height: 18)
-                    .overlay(
-                        Circle()
-                            .strokeBorder(Theme.bodyDark, lineWidth: 2)
-                    )
-                    .shadow(color: .black.opacity(0.5), radius: 3, y: 1)
-            }
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
@@ -89,7 +64,11 @@ struct PowerIcon: Shape {
             p.move(to: CGPoint(x: cx, y: cy - r * 1.1))
             p.addLine(to: CGPoint(x: cx, y: cy - r * 0.3))
 
-            // Arc with gap at top
+            // Arc with gap at top (separate subpath)
+            p.move(to: CGPoint(
+                x: cx + r * cos(.pi * -60 / 180),
+                y: cy + r * sin(.pi * -60 / 180)
+            ))
             p.addArc(
                 center: CGPoint(x: cx, y: cy),
                 radius: r,

@@ -13,14 +13,15 @@ struct ChunkyButtonStyle: ButtonStyle {
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.white.opacity(isActive ? 0.12 : 0.06))
+                    .fill(Color.white.opacity(0.06))
                     .frame(height: 3)
                     .frame(maxHeight: .infinity, alignment: .top)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .opacity(isActive ? 0 : 1)
             )
-            .offset(y: configuration.isPressed ? 2 : 0)
+            .offset(y: isActive || configuration.isPressed ? 2 : 0)
             .shadow(
-                color: Theme.bodyDarkest.opacity(0.6),
+                color: Theme.bodyDarkest.opacity(isActive ? 0 : 0.6),
                 radius: 0,
                 x: 0,
                 y: configuration.isPressed ? 1 : 3

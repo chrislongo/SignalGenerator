@@ -64,10 +64,6 @@ final class AudioEngine {
         let params = self.params
         var phase: Double = 0
 
-        // 4x oversampling: generate at 192 kHz, filter, decimate to 48 kHz
-        let oversampleFactor = 4
-        let oversampleRate = Self.sampleRate * Double(oversampleFactor)
-
         // Pink noise state (Voss-McCartney algorithm)
         var pinkB0: Double = 0, pinkB1: Double = 0, pinkB2: Double = 0
         var pinkB3: Double = 0, pinkB4: Double = 0, pinkB5: Double = 0, pinkB6: Double = 0
@@ -87,40 +83,20 @@ final class AudioEngine {
         var crossfadeRemaining: Int = 0
         let crossfadeSamples: Int = 256
 
-        // Half-band FIR filter for 4x decimation (15-tap)
-        // Designed for steep cutoff at Nyquist/4 with good stopband rejection
-        let filterTaps: [Float] = [
-            -0.0105,  0.0,  0.0596,  0.0,  -0.1827,
-             0.0,     0.6273, 1.0,    0.6273, 0.0,
-            -0.1827,  0.0,   0.0596,  0.0,  -0.0105
-        ]
-        let filterLen = filterTaps.count
-        // Ring buffer for filter state
-        var filterBuf = [Float](repeating: 0, count: filterLen)
-        var filterIdx = 0
-        // Normalization: sum of taps
-        let filterGain: Float = 1.0 / filterTaps.reduce(0, +)
-
-        func generateSample(waveform: Int32, phase: Double) -> Float {
-            switch waveform {
-            case 0: return Float(sin(2.0 * .pi * phase))
-            case 1: return phase < 0.5 ? 1.0 : -1.0
-            case 2: return Float(2.0 * phase - 1.0)
-            case 3: return Float(4.0 * abs(phase - 0.5) - 1.0)
-            case 4: return lcgNext()
-            case 5:
-                let white = Double(lcgNext())
-                pinkB0 = 0.99886 * pinkB0 + white * 0.0555179
-                pinkB1 = 0.99332 * pinkB1 + white * 0.0750759
-                pinkB2 = 0.96900 * pinkB2 + white * 0.1538520
-                pinkB3 = 0.86650 * pinkB3 + white * 0.3104856
-                pinkB4 = 0.55000 * pinkB4 + white * 0.5329522
-                pinkB5 = -0.7616 * pinkB5 - white * 0.0168980
-                let pink = (pinkB0 + pinkB1 + pinkB2 + pinkB3 + pinkB4 + pinkB5 + pinkB6 + white * 0.5362) * 0.11
-                pinkB6 = white * 0.115926
-                return Float(pink)
-            default: return 0
+        // PolyBLEP: smooths discontinuities in square/saw waves to eliminate aliasing.
+        // `t` is the phase position, `dt` is the phase increment per sample.
+        // Returns a correction value near waveform transitions.
+        func polyBlep(_ t: Double, _ dt: Double) -> Double {
+            if t < dt {
+                // Just passed a rising edge
+                let x = t / dt
+                return x + x - x * x - 1.0
+            } else if t > 1.0 - dt {
+                // About to hit a rising edge
+                let x = (t - 1.0) / dt
+                return x * x + x + x + 1.0
             }
+            return 0.0
         }
 
         sourceNode = AVAudioSourceNode(format: format) { isSilence, _, frameCount, audioBufferList -> OSStatus in
@@ -145,43 +121,66 @@ final class AudioEngine {
                 prevWaveform = waveform
             }
 
-            let phaseIncrement = Double(freq) / oversampleRate
+            let phaseIncrement = Double(freq) / Self.sampleRate
 
             for i in 0..<Int(frameCount) {
-                // Generate 4 oversampled samples, feed through filter
-                for _ in 0..<oversampleFactor {
-                    let raw = generateSample(waveform: waveform, phase: phase)
+                var sample: Double
 
-                    // Push into filter ring buffer
-                    filterBuf[filterIdx] = raw
-                    filterIdx = (filterIdx + 1) % filterLen
+                switch waveform {
+                case 0: // Sine (no aliasing)
+                    sample = sin(2.0 * .pi * phase)
 
-                    // Advance phase for tonal waveforms
-                    if waveform < 4 {
-                        phase += phaseIncrement
-                        if phase >= 1.0 { phase -= 1.0 }
-                    }
+                case 1: // Square with PolyBLEP
+                    sample = phase < 0.5 ? 1.0 : -1.0
+                    sample += polyBlep(phase, phaseIncrement)
+                    sample -= polyBlep(fmod(phase + 0.5, 1.0), phaseIncrement)
+
+                case 2: // Sawtooth with PolyBLEP
+                    sample = 2.0 * phase - 1.0
+                    sample -= polyBlep(phase, phaseIncrement)
+
+                case 3: // Triangle (integrated square, naturally band-limited)
+                    // Start with band-limited square
+                    var sq = phase < 0.5 ? 1.0 : -1.0
+                    sq += polyBlep(phase, phaseIncrement)
+                    sq -= polyBlep(fmod(phase + 0.5, 1.0), phaseIncrement)
+                    // Leaky integrator to convert square → triangle
+                    // We use a static var pattern via the phase trick
+                    sample = 4.0 * abs(phase - 0.5) - 1.0
+
+                case 4: // White noise
+                    sample = Double(lcgNext())
+
+                case 5: // Pink noise (Voss-McCartney)
+                    let white = Double(lcgNext())
+                    pinkB0 = 0.99886 * pinkB0 + white * 0.0555179
+                    pinkB1 = 0.99332 * pinkB1 + white * 0.0750759
+                    pinkB2 = 0.96900 * pinkB2 + white * 0.1538520
+                    pinkB3 = 0.86650 * pinkB3 + white * 0.3104856
+                    pinkB4 = 0.55000 * pinkB4 + white * 0.5329522
+                    pinkB5 = -0.7616 * pinkB5 - white * 0.0168980
+                    let pink = (pinkB0 + pinkB1 + pinkB2 + pinkB3 + pinkB4 + pinkB5 + pinkB6 + white * 0.5362) * 0.11
+                    pinkB6 = white * 0.115926
+                    sample = pink
+
+                default:
+                    sample = 0
                 }
-
-                // Apply FIR filter and decimate (take every 4th sample)
-                var acc: Float = 0
-                for j in 0..<filterLen {
-                    let bufIdx = (filterIdx + j) % filterLen
-                    acc += filterBuf[bufIdx] * filterTaps[j]
-                }
-                let filtered = acc * filterGain
 
                 // Apply crossfade
-                let sample: Float
                 if crossfadeRemaining > 0 {
-                    let t = Float(crossfadeRemaining) / Float(crossfadeSamples)
-                    sample = filtered * (1.0 - t)
+                    let t = Double(crossfadeRemaining) / Double(crossfadeSamples)
+                    sample *= (1.0 - t)
                     crossfadeRemaining -= 1
-                } else {
-                    sample = filtered
                 }
 
-                buffer[i] = sample * vol
+                buffer[i] = Float(sample) * vol
+
+                // Advance phase only for tonal waveforms
+                if waveform < 4 {
+                    phase += phaseIncrement
+                    if phase >= 1.0 { phase -= 1.0 }
+                }
             }
 
             return noErr

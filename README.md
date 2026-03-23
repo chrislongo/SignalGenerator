@@ -3,7 +3,8 @@
 A precision audio signal generator for iOS with a retro hardware aesthetic.
 
 <p align="center">
-  <img src="docs/signalgen.png" alt="Signal Generator" width="300">
+  <img src="docs/signalgen-1.png" alt="Signal Generator" width="300">
+  <img src="docs/signalgen-2.png" alt="Signal Generator — Frequency Input" width="300">
 </p>
 
 ## Features

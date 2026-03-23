@@ -47,6 +47,13 @@ final class SignalState {
     func adjustFrequency(by delta: Double) {
         frequency = (frequency + delta * stepIncrement).clamped(to: 10...20000)
     }
+
+    func snapFrequency() {
+        if stepIncrement >= 1 {
+            frequency = (frequency / stepIncrement).rounded() * stepIncrement
+            frequency = frequency.clamped(to: 10...20000)
+        }
+    }
 }
 
 // MARK: - Comparable clamping

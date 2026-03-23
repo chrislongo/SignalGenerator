@@ -2,25 +2,35 @@ import SwiftUI
 
 struct DisplayView: View {
     let state: SignalState
+    @Binding var frequency: Double
+    @State private var showingInput = false
 
     var body: some View {
         VStack(spacing: 0) {
-            // Waveform canvas
-            WaveformCanvasView(
-                waveform: state.waveform,
-                frequency: state.frequency,
-                volume: state.volume,
-                isPlaying: state.isPlaying
-            )
-            .frame(height: 118)
+            if showingInput {
+                FrequencyInputView(
+                    frequency: $frequency,
+                    isPresented: $showingInput
+                )
+            } else {
+                // Waveform canvas
+                WaveformCanvasView(
+                    waveform: state.waveform,
+                    frequency: state.frequency,
+                    volume: state.volume,
+                    isPlaying: state.isPlaying
+                )
+                .frame(height: 118)
 
-            // Divider
-            Rectangle()
-                .fill(Color(hex: "#1a1e14"))
-                .frame(height: 1)
+                // Divider
+                Rectangle()
+                    .fill(Color(hex: "#1a1e14"))
+                    .frame(height: 1)
 
-            // Readout
-            ReadoutView(state: state)
+                // Readout
+                ReadoutView(state: state)
+                    .onTapGesture { showingInput = true }
+            }
         }
         .background(Theme.crtBG)
         .clipShape(RoundedRectangle(cornerRadius: 10))

@@ -64,6 +64,10 @@ final class AudioEngine {
         let params = self.params
         var phase: Double = 0
 
+        // 4x oversampling: generate at 192 kHz, filter, decimate to 48 kHz
+        let oversampleFactor = 4
+        let oversampleRate = Self.sampleRate * Double(oversampleFactor)
+
         // Pink noise state (Voss-McCartney algorithm)
         var pinkB0: Double = 0, pinkB1: Double = 0, pinkB2: Double = 0
         var pinkB3: Double = 0, pinkB4: Double = 0, pinkB5: Double = 0, pinkB6: Double = 0
@@ -82,6 +86,20 @@ final class AudioEngine {
         var prevWaveform: Int32 = 0
         var crossfadeRemaining: Int = 0
         let crossfadeSamples: Int = 256
+
+        // Half-band FIR filter for 4x decimation (15-tap)
+        // Designed for steep cutoff at Nyquist/4 with good stopband rejection
+        let filterTaps: [Float] = [
+            -0.0105,  0.0,  0.0596,  0.0,  -0.1827,
+             0.0,     0.6273, 1.0,    0.6273, 0.0,
+            -0.1827,  0.0,   0.0596,  0.0,  -0.0105
+        ]
+        let filterLen = filterTaps.count
+        // Ring buffer for filter state
+        var filterBuf = [Float](repeating: 0, count: filterLen)
+        var filterIdx = 0
+        // Normalization: sum of taps
+        let filterGain: Float = 1.0 / filterTaps.reduce(0, +)
 
         func generateSample(waveform: Int32, phase: Double) -> Float {
             switch waveform {
@@ -127,27 +145,43 @@ final class AudioEngine {
                 prevWaveform = waveform
             }
 
-            let phaseIncrement = Double(freq) / Self.sampleRate
+            let phaseIncrement = Double(freq) / oversampleRate
 
             for i in 0..<Int(frameCount) {
-                let newSample = generateSample(waveform: waveform, phase: phase)
+                // Generate 4 oversampled samples, feed through filter
+                for _ in 0..<oversampleFactor {
+                    let raw = generateSample(waveform: waveform, phase: phase)
 
+                    // Push into filter ring buffer
+                    filterBuf[filterIdx] = raw
+                    filterIdx = (filterIdx + 1) % filterLen
+
+                    // Advance phase for tonal waveforms
+                    if waveform < 4 {
+                        phase += phaseIncrement
+                        if phase >= 1.0 { phase -= 1.0 }
+                    }
+                }
+
+                // Apply FIR filter and decimate (take every 4th sample)
+                var acc: Float = 0
+                for j in 0..<filterLen {
+                    let bufIdx = (filterIdx + j) % filterLen
+                    acc += filterBuf[bufIdx] * filterTaps[j]
+                }
+                let filtered = acc * filterGain
+
+                // Apply crossfade
                 let sample: Float
                 if crossfadeRemaining > 0 {
                     let t = Float(crossfadeRemaining) / Float(crossfadeSamples)
-                    sample = newSample * (1.0 - t)  // fade in new
+                    sample = filtered * (1.0 - t)
                     crossfadeRemaining -= 1
                 } else {
-                    sample = newSample
+                    sample = filtered
                 }
 
                 buffer[i] = sample * vol
-
-                // Advance phase only for tonal waveforms
-                if waveform < 4 {
-                    phase += phaseIncrement
-                    if phase >= 1.0 { phase -= 1.0 }
-                }
             }
 
             return noErr

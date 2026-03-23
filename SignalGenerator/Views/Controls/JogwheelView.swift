@@ -114,7 +114,11 @@ struct JogwheelView: View {
 
     private func applyDelta(_ delta: Double) {
         let freqDelta = delta * stepIncrement * sensitivity
-        frequency = max(10, min(20000, frequency + freqDelta))
+        var newFreq = frequency + freqDelta
+        if stepIncrement >= 1 {
+            newFreq = (newFreq / stepIncrement).rounded() * stepIncrement
+        }
+        frequency = max(10, min(20000, newFreq))
     }
 }
 

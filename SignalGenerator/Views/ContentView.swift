@@ -15,7 +15,7 @@ struct ContentView: View {
                     HeaderBar()
 
                     // ── CRT Display ──────────────────────────────────────
-                    DisplayView(state: state)
+                    DisplayView(state: state, frequency: $state.frequency)
                         .padding(.horizontal, 12)
                         .padding(.top, 0)
 
@@ -68,6 +68,7 @@ struct ContentView: View {
             .scrollDisabled(true)
         }
         // Push audio engine updates whenever state changes
+        .onChange(of: state.stepIncrement)   { state.snapFrequency() }
         .onChange(of: state.frequency)      { audioEngine.update(state: state) }
         .onChange(of: state.waveform)       { audioEngine.update(state: state) }
         .onChange(of: state.volume)         { audioEngine.update(state: state) }

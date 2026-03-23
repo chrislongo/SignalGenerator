@@ -10,10 +10,28 @@
 		83BF47C22F70D16F004B677D /* SignalGenerator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalGenerator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		83BF48062F70D338004B677D /* Exceptions for "SignalGenerator" folder in "SignalGenerator" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 83BF47C12F70D16F004B677D /* SignalGenerator */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		83BF47C42F70D16F004B677D /* SignalGenerator */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				83BF48062F70D338004B677D /* Exceptions for "SignalGenerator" folder in "SignalGenerator" target */,
+			);
 			path = SignalGenerator;
+			sourceTree = "<group>";
+		};
+		83BF48072F70D3C4004B677D /* docs */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = docs;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +50,7 @@
 		83BF47B92F70D16F004B677D = {
 			isa = PBXGroup;
 			children = (
+				83BF48072F70D3C4004B677D /* docs */,
 				83BF47C42F70D16F004B677D /* SignalGenerator */,
 				83BF47C32F70D16F004B677D /* Products */,
 			);
@@ -62,6 +81,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				83BF47C42F70D16F004B677D /* SignalGenerator */,
+				83BF48072F70D3C4004B677D /* docs */,
 			);
 			name = SignalGenerator;
 			packageProductDependencies = (
@@ -253,6 +273,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SignalGenerator/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -284,6 +305,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SignalGenerator/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

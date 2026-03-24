@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.5
+
+- Move frequency keypad below the CRT display, overlaying the jogwheel area
+- CRT display and waveform buttons stay visible during frequency input
+- Fixed-height frequency section prevents layout jumping between states
+
 ## v0.4
 
 - Fix frequency input keypad overflowing the CRT display

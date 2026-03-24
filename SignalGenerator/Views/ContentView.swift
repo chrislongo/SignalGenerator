@@ -3,6 +3,8 @@ import SwiftUI
 struct ContentView: View {
     @State private var state = SignalState()
     @State private var audioEngine = AudioEngine()
+    @State private var showingInput = false
+    @State private var inputText = ""
 
     var body: some View {
         ZStack {
@@ -15,9 +17,13 @@ struct ContentView: View {
                     HeaderBar()
 
                     // ── CRT Display ──────────────────────────────────────
-                    DisplayView(state: state, frequency: $state.frequency)
-                        .padding(.horizontal, 12)
-                        .padding(.top, 0)
+                    DisplayView(
+                        state: state,
+                        showingInput: $showingInput,
+                        inputText: inputText
+                    )
+                    .padding(.horizontal, 12)
+                    .padding(.top, 0)
 
                     // ── Waveform Buttons ─────────────────────────────────
                     sectionLabel("Waveform")
@@ -28,23 +34,35 @@ struct ContentView: View {
                     GrooveDivider()
                         .padding(.top, 10)
 
-                    // ── Frequency + Step/Volume ──────────────────────────
-                    sectionLabel("Frequency")
+                    // ── Frequency / Keypad ───────────────────────────────
+                    VStack(spacing: 0) {
+                        if showingInput {
+                            FrequencyKeypadView(
+                                inputText: $inputText,
+                                frequency: $state.frequency,
+                                isPresented: $showingInput
+                            )
+                            .frame(maxHeight: .infinity)
+                        } else {
+                            sectionLabel("Frequency")
 
-                    HStack(alignment: .center, spacing: 14) {
-                        JogwheelView(
-                            frequency: $state.frequency,
-                            stepIncrement: state.stepIncrement
-                        )
-                        .frame(width: 192, height: 192)
+                            HStack(alignment: .center, spacing: 14) {
+                                JogwheelView(
+                                    frequency: $state.frequency,
+                                    stepIncrement: state.stepIncrement
+                                )
+                                .frame(width: 192, height: 192)
 
-                        VStack(spacing: 12) {
-                            StepButtonsView(stepIncrement: $state.stepIncrement)
-                            VolumeButtonsView(volume: $state.volume)
+                                VStack(spacing: 12) {
+                                    StepButtonsView(stepIncrement: $state.stepIncrement)
+                                    VolumeButtonsView(volume: $state.volume)
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
+                            .padding(.horizontal, 12)
                         }
-                        .frame(maxWidth: .infinity)
                     }
-                    .padding(.horizontal, 12)
+                    .frame(height: 222)
 
                     // ── Groove ───────────────────────────────────────────
                     GrooveDivider()
@@ -68,6 +86,9 @@ struct ContentView: View {
             .scrollDisabled(true)
         }
         // Push audio engine updates whenever state changes
+        .onChange(of: showingInput) {
+            if !showingInput { inputText = "" }
+        }
         .onChange(of: state.stepIncrement)   { state.snapFrequency() }
         .onChange(of: state.frequency)      { audioEngine.update(state: state) }
         .onChange(of: state.waveform)       { audioEngine.update(state: state) }

@@ -1,18 +1,18 @@
 import SwiftUI
 
-struct FrequencyInputView: View {
-    @Binding var frequency: Double
-    @Binding var isPresented: Bool
+// MARK: - Readout shown inside the CRT display during input mode
 
-    @State private var inputText: String = ""
+struct FrequencyInputReadout: View {
+    let inputText: String
+    let state: SignalState
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Input field
-            VStack(alignment: .leading, spacing: 4) {
+        HStack(alignment: .bottom) {
+            // Left — input text + range hint
+            VStack(alignment: .leading, spacing: 2) {
                 HStack(alignment: .lastTextBaseline, spacing: 2) {
                     Text(inputText.isEmpty ? "0" : inputText)
-                        .font(Theme.monoBold(28))
+                        .font(Theme.monoBold(34))
                         .foregroundStyle(inputText.isEmpty ? Theme.amber.opacity(0.3) : Theme.amber)
                         .shadow(color: Theme.amber.opacity(0.4), radius: 10)
                         .lineLimit(1)
@@ -21,54 +21,74 @@ struct FrequencyInputView: View {
                     // Blinking cursor
                     Rectangle()
                         .fill(Theme.amber)
-                        .frame(width: 2, height: 24)
+                        .frame(width: 3, height: 30)
                         .shadow(color: Theme.amber.opacity(0.6), radius: 6)
                         .modifier(BlinkModifier())
                 }
 
                 Text("10 — 20000 Hz")
-                    .font(Theme.mono(9))
+                    .font(Theme.mono(12))
                     .foregroundStyle(Theme.crtTeal.opacity(0.5))
             }
-            .padding(.horizontal, 14)
-            .padding(.top, 10)
-            .padding(.bottom, 6)
 
-            Rectangle()
-                .fill(Color(hex: "#1a1e14"))
-                .frame(height: 1)
+            Spacer()
 
-            // Keypad
-            VStack(spacing: 4) {
-                HStack(spacing: 4) {
-                    keyButton("1") { append("1") }
-                    keyButton("2") { append("2") }
-                    keyButton("3") { append("3") }
-                    keyButton("\u{232B}", style: .dim) { backspace() }
-                }
-                HStack(spacing: 4) {
-                    keyButton("4") { append("4") }
-                    keyButton("5") { append("5") }
-                    keyButton("6") { append("6") }
-                    keyButton("Hz", style: .confirm) { confirm(multiplier: 1) }
-                }
-                HStack(spacing: 4) {
-                    keyButton("7") { append("7") }
-                    keyButton("8") { append("8") }
-                    keyButton("9") { append("9") }
-                    keyButton("kHz", style: .confirmDim) { confirm(multiplier: 1000) }
-                }
-                HStack(spacing: 4) {
-                    keyButton("ESC", style: .dim) { cancel() }
-                    keyButton("0") { append("0") }
-                    keyButton(".", style: .normal) { appendDecimal() }
-                    keyButton("C", style: .confirmDim) { inputText = "" }
-                }
+            // Right — waveform + volume (same as normal readout)
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(state.waveform.shortLabel)
+                    .font(Theme.monoBold(13))
+                    .foregroundStyle(Theme.crtTeal)
+                    .shadow(color: Theme.crtTeal.opacity(0.4), radius: 4)
+
+                Text("VOL \(state.volumePercent)%")
+                    .font(Theme.mono(11))
+                    .foregroundStyle(Theme.amberDim)
             }
-            .padding(.horizontal, 10)
-            .padding(.top, 6)
-            .padding(.bottom, 8)
         }
+        .padding(.horizontal, 14)
+        .padding(.top, 8)
+        .padding(.bottom, 10)
+    }
+}
+
+// MARK: - Keypad overlay shown over the controls area
+
+struct FrequencyKeypadView: View {
+    @Binding var inputText: String
+    @Binding var frequency: Double
+    @Binding var isPresented: Bool
+
+    var body: some View {
+        VStack(spacing: 6) {
+            HStack(spacing: 6) {
+                keyButton("1") { append("1") }
+                keyButton("2") { append("2") }
+                keyButton("3") { append("3") }
+                keyButton("\u{232B}", style: .dim) { backspace() }
+            }
+            HStack(spacing: 6) {
+                keyButton("4") { append("4") }
+                keyButton("5") { append("5") }
+                keyButton("6") { append("6") }
+                keyButton("Hz", style: .confirm) { confirm(multiplier: 1) }
+            }
+            HStack(spacing: 6) {
+                keyButton("7") { append("7") }
+                keyButton("8") { append("8") }
+                keyButton("9") { append("9") }
+                keyButton("kHz", style: .confirmDim) { confirm(multiplier: 1000) }
+            }
+            HStack(spacing: 6) {
+                keyButton("ESC", style: .dim) { cancel() }
+                keyButton("0") { append("0") }
+                keyButton(".", style: .normal) { appendDecimal() }
+                keyButton("C", style: .confirmDim) { inputText = "" }
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.top, 10)
+        .padding(.bottom, 12)
+        .background(Theme.body)
     }
 
     // MARK: - Key styles
@@ -81,9 +101,9 @@ struct FrequencyInputView: View {
     private func keyButton(_ label: String, style: KeyStyle = .normal, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(label)
-                .font(style == .confirm || style == .confirmDim ? Theme.monoBold(12) : Theme.monoBold(14))
+                .font(style == .confirm || style == .confirmDim ? Theme.monoBold(16) : Theme.monoBold(20))
                 .frame(maxWidth: .infinity)
-                .frame(height: 28)
+                .frame(height: 48)
         }
         .buttonStyle(KeypadButtonStyle(style: style))
     }
@@ -138,7 +158,7 @@ private struct BlinkModifier: ViewModifier {
 // MARK: - Keypad button style
 
 private struct KeypadButtonStyle: ButtonStyle {
-    let style: FrequencyInputView.KeyStyle
+    let style: FrequencyKeypadView.KeyStyle
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label

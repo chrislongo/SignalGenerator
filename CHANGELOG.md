@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.6
+
+- Rename app to "SignalGenerator SG-2400"
+- Add "Corvid Audio" branding to footer
+- Remove alpha channel from app icons (fixes TestFlight upload)
+- Lighten faint UI text for better readability
+- Add unit test target with 30 tests (SignalState, WaveformType, FrequencyToNote, AudioParameters, Clamped)
+
 ## v0.5
 
 - Move frequency keypad below the CRT display, overlaying the jogwheel area

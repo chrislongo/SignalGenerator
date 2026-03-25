@@ -6,8 +6,19 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXContainerItemProxy section */
+		83BF48192F70D400004B677D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83BF47BA2F70D16F004B677D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 83BF47C12F70D16F004B677D;
+			remoteInfo = SignalGenerator;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		83BF47C22F70D16F004B677D /* SignalGenerator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SignalGenerator.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		83BF48102F70D400004B677D /* SignalGeneratorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SignalGeneratorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -34,10 +45,22 @@
 			path = docs;
 			sourceTree = "<group>";
 		};
+		83BF481A2F70D400004B677D /* SignalGeneratorTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = SignalGeneratorTests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		83BF47BF2F70D16F004B677D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		83BF48132F70D400004B677D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -52,6 +75,7 @@
 			children = (
 				83BF48072F70D3C4004B677D /* docs */,
 				83BF47C42F70D16F004B677D /* SignalGenerator */,
+				83BF481A2F70D400004B677D /* SignalGeneratorTests */,
 				83BF47C32F70D16F004B677D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -60,6 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				83BF47C22F70D16F004B677D /* SignalGenerator.app */,
+				83BF48102F70D400004B677D /* SignalGeneratorTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -90,6 +115,29 @@
 			productReference = 83BF47C22F70D16F004B677D /* SignalGenerator.app */;
 			productType = "com.apple.product-type.application";
 		};
+		83BF48112F70D400004B677D /* SignalGeneratorTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 83BF48172F70D400004B677D /* Build configuration list for PBXNativeTarget "SignalGeneratorTests" */;
+			buildPhases = (
+				83BF48122F70D400004B677D /* Sources */,
+				83BF48132F70D400004B677D /* Frameworks */,
+				83BF48142F70D400004B677D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				83BF48182F70D400004B677D /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				83BF481A2F70D400004B677D /* SignalGeneratorTests */,
+			);
+			name = SignalGeneratorTests;
+			packageProductDependencies = (
+			);
+			productName = SignalGeneratorTests;
+			productReference = 83BF48102F70D400004B677D /* SignalGeneratorTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -102,6 +150,10 @@
 				TargetAttributes = {
 					83BF47C12F70D16F004B677D = {
 						CreatedOnToolsVersion = 26.3;
+					};
+					83BF48112F70D400004B677D = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = 83BF47C12F70D16F004B677D;
 					};
 				};
 			};
@@ -120,12 +172,20 @@
 			projectRoot = "";
 			targets = (
 				83BF47C12F70D16F004B677D /* SignalGenerator */,
+				83BF48112F70D400004B677D /* SignalGeneratorTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		83BF47C02F70D16F004B677D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		83BF48142F70D400004B677D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -142,7 +202,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		83BF48122F70D400004B677D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		83BF48182F70D400004B677D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 83BF47C12F70D16F004B677D /* SignalGenerator */;
+			targetProxy = 83BF48192F70D400004B677D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		83BF47CB2F70D170004B677D /* Debug */ = {
@@ -330,6 +405,48 @@
 			};
 			name = Release;
 		};
+		83BF48152F70D400004B677D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4RAN85N774;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.chrislongo.SignalGeneratorTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SignalGenerator.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SignalGenerator";
+			};
+			name = Debug;
+		};
+		83BF48162F70D400004B677D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4RAN85N774;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = net.chrislongo.SignalGeneratorTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SignalGenerator.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SignalGenerator";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -347,6 +464,15 @@
 			buildConfigurations = (
 				83BF47CE2F70D170004B677D /* Debug */,
 				83BF47CF2F70D170004B677D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		83BF48172F70D400004B677D /* Build configuration list for PBXNativeTarget "SignalGeneratorTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				83BF48152F70D400004B677D /* Debug */,
+				83BF48162F70D400004B677D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

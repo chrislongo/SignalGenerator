@@ -29,7 +29,7 @@ enum Theme {
     // MARK: - Text
     static let textCream    = Color(hex: "#b8b4a8")
     static let textDim      = Color(hex: "#6e6e68")
-    static let textFaint    = Color(hex: "#4e4e4a")
+    static let textFaint    = Color(hex: "#7a7872")
     static let textDark     = Color(hex: "#101012")
 
     // MARK: - Typography

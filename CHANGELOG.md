@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.1
+
+- Expand power button hit target to include OUTPUT/ACTIVE label
+
 ## v0.6
 
 - Rename app to "SignalGenerator SG-2400"

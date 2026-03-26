@@ -6,10 +6,10 @@ struct PowerView: View {
     var body: some View {
         HStack {
             // Power button group
-            HStack(spacing: 10) {
-                Button {
-                    isPlaying.toggle()
-                } label: {
+            Button {
+                isPlaying.toggle()
+            } label: {
+                HStack(spacing: 10) {
                     ZStack {
                         Circle()
                             .fill(isPlaying ? Theme.red : Theme.bodyLighter)
@@ -27,22 +27,22 @@ struct PowerView: View {
                             .frame(width: 20, height: 20)
                     }
                     .frame(width: 48, height: 48)
-                }
-                .buttonStyle(.plain)
-                .shadow(color: .black.opacity(0.25), radius: 0, y: isPlaying ? 2 : 3)
+                    .shadow(color: .black.opacity(0.25), radius: 0, y: isPlaying ? 2 : 3)
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("OUTPUT")
-                        .font(Theme.display(9))
-                        .kerning(2)
-                        .foregroundStyle(Theme.textFaint)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("OUTPUT")
+                            .font(Theme.display(9))
+                            .kerning(2)
+                            .foregroundStyle(Theme.textFaint)
 
-                    Text(isPlaying ? "ACTIVE" : "OFF")
-                        .font(Theme.monoBold(10))
-                        .foregroundStyle(isPlaying ? Theme.red : Theme.textFaint)
-                        .shadow(color: isPlaying ? Theme.red.opacity(0.3) : .clear, radius: 4)
+                        Text(isPlaying ? "ACTIVE" : "OFF")
+                            .font(Theme.monoBold(10))
+                            .foregroundStyle(isPlaying ? Theme.red : Theme.textFaint)
+                            .shadow(color: isPlaying ? Theme.red.opacity(0.3) : .clear, radius: 4)
+                    }
                 }
             }
+            .buttonStyle(.plain)
 
             Spacer()
         }

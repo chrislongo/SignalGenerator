@@ -79,10 +79,13 @@ final class AudioEngine {
             return f * 2.0 - 1.0
         }
 
-        // Crossfade state for seamless waveform switching
+        // Crossfade state for seamless waveform switching and play/stop
         var prevWaveform: Int32 = 0
         var crossfadeRemaining: Int = 0
         let crossfadeSamples: Int = 256
+        var wasPlaying: Bool = true
+        var fadeInRemaining: Int = 0
+        var fadeOutRemaining: Int = 0
 
         // PolyBLEP: smooths discontinuities in square/saw waves to eliminate aliasing.
         // `t` is the phase position, `dt` is the phase increment per sample.
@@ -110,7 +113,16 @@ final class AudioEngine {
             guard let rawBuffer = ablPointer[0].mData else { return noErr }
             let buffer = rawBuffer.assumingMemoryBound(to: Float.self)
 
-            if !playing {
+            // Detect play/stop transitions for fade in/out
+            if playing && !wasPlaying {
+                fadeInRemaining = crossfadeSamples
+                fadeOutRemaining = 0
+            } else if !playing && wasPlaying {
+                fadeOutRemaining = crossfadeSamples
+            }
+            wasPlaying = playing
+
+            if !playing && fadeOutRemaining == 0 {
                 isSilence.pointee = true
                 for i in 0..<Int(frameCount) { buffer[i] = 0 }
                 return noErr
@@ -167,11 +179,22 @@ final class AudioEngine {
                     sample = 0
                 }
 
-                // Apply crossfade
+                // Apply crossfade (waveform switch)
                 if crossfadeRemaining > 0 {
                     let t = Double(crossfadeRemaining) / Double(crossfadeSamples)
                     sample *= (1.0 - t)
                     crossfadeRemaining -= 1
+                }
+
+                // Apply fade in/out (play/stop)
+                if fadeInRemaining > 0 {
+                    let t = Double(fadeInRemaining) / Double(crossfadeSamples)
+                    sample *= (1.0 - t)
+                    fadeInRemaining -= 1
+                } else if fadeOutRemaining > 0 {
+                    let t = Double(fadeOutRemaining) / Double(crossfadeSamples)
+                    sample *= t
+                    fadeOutRemaining -= 1
                 }
 
                 buffer[i] = Float(sample) * vol

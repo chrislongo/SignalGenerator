@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.1
+
+- Fix audio pop when toggling play/stop (fade in/out over 256 samples)
+
 ## v0.7
 
 - Fix jogwheel to accumulate rotation before stepping, preventing inconsistent jumps

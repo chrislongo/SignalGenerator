@@ -10,8 +10,18 @@ struct JogwheelView: View {
     @State private var isDragging: Bool = false
 
 
-    // Sensitivity: degrees of rotation per step-increment unit
-    private let sensitivity: Double = 0.3
+    // Accumulated rotation for step-based snapping
+    @State private var accumulatedSteps: Double = 0
+
+    // Degrees of jogwheel rotation needed to advance one step
+    private var degreesPerStep: Double {
+        switch stepIncrement {
+        case 100:  return 15
+        case 10:   return 10
+        case 1:    return 5
+        default:   return 3
+        }
+    }
 
     var body: some View {
         GeometryReader { geo in
@@ -53,27 +63,25 @@ struct JogwheelView: View {
                         )
                     )
                     .frame(width: geo.size.width * 0.72, height: geo.size.width * 0.72)
-                    // Thumb indent — concave scoop at top
+                    // Thumb indent — smooth round groove
                     .overlay(alignment: .top) {
                         Circle()
                             .fill(
                                 RadialGradient(
                                     gradient: Gradient(colors: [
-                                        Color(hex: "#1a1a1c"),
-                                        Color(hex: "#2a2a2c"),
-                                        Color(hex: "#353535")
+                                        Color(hex: "#222224"),
+                                        Color(hex: "#333335")
                                     ]),
-                                    center: UnitPoint(x: 0.5, y: 0.6),
+                                    center: UnitPoint(x: 0.5, y: 0.55),
                                     startRadius: 0,
                                     endRadius: 18
                                 )
                             )
-                            .frame(width: 30, height: 30)
+                            .frame(width: 32, height: 32)
                             .overlay(
                                 Circle()
-                                    .strokeBorder(Color.white.opacity(0.04), lineWidth: 0.5)
+                                    .strokeBorder(Color(hex: "#383838"), lineWidth: 1)
                             )
-                            .shadow(color: .black.opacity(0.5), radius: 4, y: -2)
                             .padding(.top, 10)
                     }
                     .rotationEffect(.degrees(wheelAngle))
@@ -113,12 +121,19 @@ struct JogwheelView: View {
 
 
     private func applyDelta(_ delta: Double) {
-        let freqDelta = delta * stepIncrement * sensitivity
-        var newFreq = frequency + freqDelta
         if stepIncrement >= 1 {
-            newFreq = (newFreq / stepIncrement).rounded() * stepIncrement
+            // Accumulate rotation, only change frequency on full steps
+            accumulatedSteps += delta / degreesPerStep
+            let wholeSteps = accumulatedSteps.rounded(.towardZero)
+            if wholeSteps != 0 {
+                frequency = max(10, min(20000, frequency + wholeSteps * stepIncrement))
+                accumulatedSteps -= wholeSteps
+            }
+        } else {
+            // Sub-Hz: continuous movement
+            let freqDelta = delta * stepIncrement / degreesPerStep
+            frequency = max(10, min(20000, frequency + freqDelta))
         }
-        frequency = max(10, min(20000, newFreq))
     }
 }
 

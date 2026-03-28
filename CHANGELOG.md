@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.7
+
+- Fix jogwheel to accumulate rotation before stepping, preventing inconsistent jumps
+- Scale jogwheel sensitivity by step size (larger steps need more rotation)
+- Simplify jogwheel thumb groove to a smooth round dimple
+
 ## v0.6.1
 
 - Expand power button hit target to include OUTPUT/ACTIVE label

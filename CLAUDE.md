@@ -37,7 +37,7 @@ The signal chain is: `AVAudioSourceNode → AVAudioMixerNode → AVAudioOutputNo
 
 `ContentView` assembles the full layout top-to-bottom: HeaderBar → DisplayView (CRT-style with Canvas waveform + readout) → WaveformButtons (3x2 grid) → Jogwheel + Step/Volume controls → PowerView. All colors and fonts come from `Theme` enum. Tapping the frequency readout opens a calculator-style keypad (`FrequencyKeypadView`) that overlays the jogwheel/step/volume area while keeping the CRT display and waveform buttons visible. The input text and cursor are shown in the display readout (`FrequencyInputReadout`).
 
-Frequency snaps to the active step increment (for steps >= 1 Hz) both when turning the jogwheel and when changing step size.
+Frequency snaps to the active step increment (for steps >= 1 Hz) both when turning the jogwheel and when changing step size. The jogwheel accumulates rotation and only steps when a full step's worth of degrees has been reached, with the degrees-per-step scaled by step size (larger steps require more rotation).
 
 ### Custom Fonts
 

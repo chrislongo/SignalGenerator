@@ -3,7 +3,7 @@ import SwiftUI
 struct HeaderBar: View {
     var body: some View {
         HStack {
-            Text("SIGNAL GEN")
+            Text("SIGNAL GENERATOR")
                 .font(Theme.displayHeavy(13))
                 .kerning(4)
                 .foregroundStyle(.white)
@@ -23,5 +23,5 @@ struct HeaderBar: View {
                 .fill(Theme.tealDark)
                 .frame(height: 2)
         }
-    }
+    }   
 }

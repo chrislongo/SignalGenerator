@@ -5,7 +5,7 @@
 
 ## Overview
 
-SignalGenerator SG-2400 is an audio signal generator app developed by Corvid Audio. Your privacy is important to us.
+SignalGenerator SG-2400 is an audio signal generator app developed by Chris Longo. Your privacy is important to us.
 
 ## Data Collection
 

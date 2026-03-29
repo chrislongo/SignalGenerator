@@ -5,7 +5,6 @@ A precision audio signal generator for iOS with a retro hardware aesthetic.
 <p align="center">
   <img src="docs/signalgen-1.png" alt="SignalGenerator SG-2400" width="250">
   <img src="docs/signalgen-2.png" alt="SignalGenerator SG-2400 — Frequency Input" width="250">
-  <img src="docs/signalgen-3.png" alt="SignalGenerator SG-2400" width="250">
 </p>
 
 ## Features

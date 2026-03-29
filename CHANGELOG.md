@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0
+
+- First App Store release
+- Restore "48kHz / 16-bit" footer text
+- Updated screenshots
+
 ## v0.7.1
 
 - Fix audio pop when toggling play/stop (fade in/out over 256 samples)

@@ -74,7 +74,7 @@ struct ContentView: View {
                     HStack {
                         Text("Precision Audio Instrument")
                         Spacer()
-                        Text("Corvid Audio")
+                        Text("48kHz / 16-bit")
                     }
                     .font(Theme.display(7))
                     .foregroundStyle(Theme.textFaint.opacity(0.6))

@@ -51,7 +51,7 @@ struct ContentView: View {
                                     frequency: $state.frequency,
                                     stepIncrement: state.stepIncrement
                                 )
-                                .frame(width: 192, height: 192)
+                                .frame(width: 220, height: 220)
 
                                 VStack(spacing: 12) {
                                     StepButtonsView(stepIncrement: $state.stepIncrement)
@@ -62,7 +62,7 @@ struct ContentView: View {
                             .padding(.horizontal, 12)
                         }
                     }
-                    .frame(height: 222)
+                    .frame(height: 250)
 
                     // ── Groove ───────────────────────────────────────────
                     GrooveDivider()

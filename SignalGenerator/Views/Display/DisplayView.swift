@@ -14,7 +14,7 @@ struct DisplayView: View {
                 volume: state.volume,
                 isPlaying: state.isPlaying
             )
-            .frame(height: 118)
+            .frame(height: 150)
 
             // Divider
             Rectangle()

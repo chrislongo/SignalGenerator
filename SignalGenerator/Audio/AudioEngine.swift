@@ -79,13 +79,16 @@ final class AudioEngine {
             return f * 2.0 - 1.0
         }
 
-        // Crossfade state for seamless waveform switching and play/stop
+        // Crossfade state for seamless waveform switching
         var prevWaveform: Int32 = 0
         var crossfadeRemaining: Int = 0
         let crossfadeSamples: Int = 256
+
+        // Fade in/out for play/stop (longer for click-free transitions)
         var wasPlaying: Bool = true
         var fadeInRemaining: Int = 0
         var fadeOutRemaining: Int = 0
+        let fadeSamples: Int = 2048  // ~43ms at 48kHz
 
         // PolyBLEP: smooths discontinuities in square/saw waves to eliminate aliasing.
         // `t` is the phase position, `dt` is the phase increment per sample.
@@ -115,10 +118,10 @@ final class AudioEngine {
 
             // Detect play/stop transitions for fade in/out
             if playing && !wasPlaying {
-                fadeInRemaining = crossfadeSamples
+                fadeInRemaining = fadeSamples
                 fadeOutRemaining = 0
             } else if !playing && wasPlaying {
-                fadeOutRemaining = crossfadeSamples
+                fadeOutRemaining = fadeSamples
             }
             wasPlaying = playing
 
@@ -186,14 +189,14 @@ final class AudioEngine {
                     crossfadeRemaining -= 1
                 }
 
-                // Apply fade in/out (play/stop)
+                // Apply fade in/out (play/stop) with cosine curve
                 if fadeInRemaining > 0 {
-                    let t = Double(fadeInRemaining) / Double(crossfadeSamples)
-                    sample *= (1.0 - t)
+                    let t = Double(fadeInRemaining) / Double(fadeSamples)
+                    sample *= 0.5 - 0.5 * cos(.pi * (1.0 - t))
                     fadeInRemaining -= 1
                 } else if fadeOutRemaining > 0 {
-                    let t = Double(fadeOutRemaining) / Double(crossfadeSamples)
-                    sample *= t
+                    let t = Double(fadeOutRemaining) / Double(fadeSamples)
+                    sample *= 0.5 - 0.5 * cos(.pi * t)
                     fadeOutRemaining -= 1
                 }
 

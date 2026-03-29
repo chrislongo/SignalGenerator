@@ -3,7 +3,8 @@
 ## v1.0
 
 - First App Store release
-- Restore "48kHz / 16-bit" footer text
+- Larger CRT display (150pt) and jogwheel (220pt) to fill screen
+- Click-free play/stop with 2048-sample cosine fade (~43ms)
 - Updated screenshots
 
 ## v0.7.1

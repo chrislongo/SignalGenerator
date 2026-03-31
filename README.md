@@ -32,4 +32,3 @@ Open `SignalGenerator.xcodeproj` in Xcode, select your target device, and run.
 
 Built with SwiftUI and AVAudioEngine. The audio engine uses an `AVAudioSourceNode` render callback with PolyBLEP anti-aliasing for alias-free synthesis — lowest possible latency with no intermediate buffers.
 
-See [docs/Design.md](docs/Design.md) for the full technical design and [docs/Requirements.md](docs/Requirements.md) for the product spec.

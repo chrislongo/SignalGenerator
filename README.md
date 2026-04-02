@@ -8,7 +8,7 @@
 
 A precision audio signal generator for iOS with a retro hardware aesthetic.
 
-<p align="center">
+<p>
   <img src="docs/signalgen-1.png" alt="SignalGenerator SG-2400" width="250">
   &nbsp;&nbsp;&nbsp;&nbsp;
   <img src="docs/signalgen-2.png" alt="SignalGenerator SG-2400 — Frequency Input" width="250">

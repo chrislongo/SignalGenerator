@@ -1,17 +1,17 @@
 # SignalGenerator SG-2400
 
+<p align="center">
+  <a href="https://apps.apple.com/us/app/signal-generator-sg-2400/id6761087119">
+    <img src="docs/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store" height="40">
+  </a>
+</p>
+
 A precision audio signal generator for iOS with a retro hardware aesthetic.
 
 <p align="center">
   <img src="docs/signalgen-1.png" alt="SignalGenerator SG-2400" width="250">
   &nbsp;&nbsp;&nbsp;&nbsp;
   <img src="docs/signalgen-2.png" alt="SignalGenerator SG-2400 — Frequency Input" width="250">
-</p>
-
-<p align="center">
-  <a href="https://apps.apple.com/us/app/signal-generator-sg-2400/id6761087119">
-    <img src="docs/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store" height="40">
-  </a>
 </p>
 
 ## Features

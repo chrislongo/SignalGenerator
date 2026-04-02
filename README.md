@@ -8,6 +8,12 @@ A precision audio signal generator for iOS with a retro hardware aesthetic.
   <img src="docs/signalgen-2.png" alt="SignalGenerator SG-2400 — Frequency Input" width="250">
 </p>
 
+<p align="center">
+  <a href="https://apps.apple.com/us/app/signal-generator-sg-2400/id6761087119">
+    <img src="docs/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store" height="40">
+  </a>
+</p>
+
 ## Features
 
 - **Tone generation** — Sine, Square, Sawtooth, and Triangle waveforms from 10 Hz to 20 kHz

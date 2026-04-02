@@ -2,7 +2,7 @@
 
 A precision audio signal generator for iOS with a retro hardware aesthetic.
 
-<p>
+<p align="center">
   <a href="https://apps.apple.com/us/app/signal-generator-sg-2400/id6761087119">
     <img src="docs/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg" alt="Download on the App Store" height="40">
   </a>

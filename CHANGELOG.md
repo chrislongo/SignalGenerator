@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1
+
+- Persist state across app launches (frequency, waveform, step increment, volume, power)
+
 ## v1.0
 
 - First App Store release

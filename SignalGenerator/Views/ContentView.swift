@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @State private var state = SignalState()
     @State private var audioEngine = AudioEngine()
     @State private var showingInput = false
@@ -95,8 +96,12 @@ struct ContentView: View {
         .onChange(of: state.volume)         { audioEngine.update(state: state) }
         .onChange(of: state.isPlaying)      { audioEngine.update(state: state) }
         .onAppear {
+            state.load()
             audioEngine.update(state: state)
             audioEngine.start()
+        }
+        .onChange(of: scenePhase) {
+            if scenePhase == .background { state.save() }
         }
     }
 

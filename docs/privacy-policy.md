@@ -1,7 +1,7 @@
 # Privacy Policy
 
 **SignalGenerator SG-2400**
-*Last updated: March 28, 2026*
+*Last updated: April 4, 2026*
 
 ## Overview
 

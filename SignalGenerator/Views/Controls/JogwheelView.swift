@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct JogwheelView: View {
     @Binding var frequency: Double
@@ -8,6 +9,9 @@ struct JogwheelView: View {
     @State private var wheelAngle: Double = 0
     @State private var lastDragAngle: Double = 0
     @State private var isDragging: Bool = false
+
+    private let stepFeedback = UIImpactFeedbackGenerator(style: .light)
+    private let startFeedback = UIImpactFeedbackGenerator(style: .soft)
 
 
     // Accumulated rotation for step-based snapping
@@ -98,6 +102,7 @@ struct JogwheelView: View {
                         if !isDragging {
                             isDragging = true
                             lastDragAngle = angle
+                            startFeedback.impactOccurred(intensity: 0.5)
                         }
 
                         var delta = angle - lastDragAngle
@@ -128,6 +133,7 @@ struct JogwheelView: View {
             if wholeSteps != 0 {
                 frequency = max(10, min(20000, frequency + wholeSteps * stepIncrement))
                 accumulatedSteps -= wholeSteps
+                stepFeedback.impactOccurred(intensity: 0.5)
             }
         } else {
             // Sub-Hz: continuous movement

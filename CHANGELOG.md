@@ -1,5 +1,9 @@
 # Changelog
 
+## v1.1.1
+
+- Fix brief audio blip when launching with power off
+
 ## v1.1
 
 - Persist state across app launches (frequency, waveform, step increment, volume, power)

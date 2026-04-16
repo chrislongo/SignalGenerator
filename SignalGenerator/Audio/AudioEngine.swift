@@ -85,7 +85,7 @@ final class AudioEngine {
         let crossfadeSamples: Int = 256
 
         // Fade in/out for play/stop (longer for click-free transitions)
-        var wasPlaying: Bool = true
+        var wasPlaying: Bool = false
         var fadeInRemaining: Int = 0
         var fadeOutRemaining: Int = 0
         let fadeSamples: Int = 2048  // ~43ms at 48kHz
